@@ -5,7 +5,10 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 import java.util.List;
 
 import com.googlecode.objectify.ObjectifyService;
+import com.googlecode.objectify.cmd.Query;
+import com.googlecode.objectify.cmd.SimpleQuery;
 import com.test.objectify.model.ChildEntity;
+import com.test.objectify.model.GrandChildEntity;
 import com.test.objectify.model.ParentEntity;
 
 public class ChildDao {
@@ -13,6 +16,8 @@ public class ChildDao {
 	static{
 		ObjectifyService.register(ChildEntity.class);
 	}
+	
+	GrandChildDao grandChildDao = new GrandChildDao();
 	
 	public ChildEntity save(ChildEntity child) {
 		ofy().save().entity(child).now();
@@ -31,9 +36,15 @@ public class ChildDao {
 		List<ChildEntity> childs = ofy().load().type(ChildEntity.class).ancestor(parent).list();
 		System.out.println("findChildrensOfParent size:"+childs.size());
 		for(ChildEntity child:childs){
-			System.out.println("findChildrensOfParent:"+child.getParent());
+			fillAllChildDetails(child);
 		}
 		return childs;
 	}
 	
+	
+	private void fillAllChildDetails(ChildEntity parent){
+		List<GrandChildEntity> childs = grandChildDao.findGrandChildrensOfChild(parent);
+		parent.setGrandChilds(childs);
+		
+	}
 }

@@ -1,31 +1,28 @@
 package com.test.objectify.model;
 
-import java.util.List;
-
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
-import com.googlecode.objectify.annotation.Ignore;
 import com.googlecode.objectify.annotation.Index;
 import com.googlecode.objectify.annotation.Load;
 import com.googlecode.objectify.annotation.Parent;
 
 @Entity
 @Index//Optional
-public class ChildEntity {
+public class GrandChildEntity {
 	
 	@Id
     private Long id;
 	
+	private String grandChildName;
+	
 	@Load
 	@Parent
-    private Ref<ParentEntity> parent;
+    private Ref<ChildEntity> parent;
 	
-	private String childName;
 	
-	@Ignore 
-	private List<GrandChildEntity> grandChilds;
+	
 
 	/**
 	 * @return the id
@@ -44,35 +41,23 @@ public class ChildEntity {
 	/**
 	 * @return the parent
 	 */
-	public final ParentEntity getParent() {
+	public final ChildEntity getParent() {
 		return parent.get();
 	}
 
 	/**
 	 * @param parent the parent to set
 	 */
-	public final void setParent(ParentEntity parent) {
+	public final void setParent(ChildEntity parent) {
 		this.parent = Ref.create(parent.getKey(), parent);
 	}
 
-	/**
-	 * @return the childName
-	 */
-	public final String getChildName() {
-		return childName;
-	}
-
-	/**
-	 * @param childName the childName to set
-	 */
-	public final void setChildName(String childName) {
-		this.childName = childName;
-	}
+	
 	
 	/**
      * @return the key
      */
-    public Key<ChildEntity> getKey() {
+    public Key<GrandChildEntity> getKey() {
     	if(id == null){
     		return null;
     	}
@@ -83,28 +68,27 @@ public class ChildEntity {
 	public String toString() {
 		StringBuilder tmp = new StringBuilder();
 		tmp.append(" {id:").append(id);
-		tmp.append(", childName:").append(childName);
-		tmp.append(", grandChilds:").append(grandChilds);
+		tmp.append(", grandChildName:").append(getGrandChildName());
 		if(parent == null){
-			tmp.append(", parent is null. }");
+			tmp.append(", grand child parent is null. }");
 		}else{
-			tmp.append(", parent is not null. } ");
+			tmp.append(", grand child parent is not null. } ");
 		}
 		return tmp.toString();
 	}
 
 	/**
-	 * @param grandChilds the grandChilds to set
+	 * @param grandChildName the grandChildName to set
 	 */
-	public void setGrandChilds(List<GrandChildEntity> grandChilds) {
-		this.grandChilds = grandChilds;
+	public void setGrandChildName(String grandChildName) {
+		this.grandChildName = grandChildName;
 	}
 
 	/**
-	 * @return the grandChilds
+	 * @return the grandChildName
 	 */
-	public List<GrandChildEntity> getGrandChilds() {
-		return grandChilds;
+	public String getGrandChildName() {
+		return grandChildName;
 	}
 	
 	
