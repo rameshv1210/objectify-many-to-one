@@ -33,10 +33,16 @@ public class GrandChildDao {
 	}
 	
 	public List<GrandChildEntity> findGrandChildrensOfChild(ChildEntity parent) {
-		List<GrandChildEntity> grandChilds = ofy().load().type(GrandChildEntity.class).ancestor(new KeyFactory.Builder("ChildEntity",parent.getId()).getKey()).list();
-		System.out.println("findGrandChildrensOfChild size:"+grandChilds.size());
-		for(GrandChildEntity grandChild:grandChilds){
-			System.out.println("grandChildParent:"+grandChild.getParent());
+		List<GrandChildEntity> grandChilds = ofy().load().type(GrandChildEntity.class).ancestor(parent).list();
+		
+		//this is to overcome the issue of objectify, https://github.com/stickfigure/objectify/issues/1
+		if(grandChilds==null || grandChilds.size() == 0){
+			grandChilds = ofy().load().type(GrandChildEntity.class).ancestor(new KeyFactory.Builder("ChildEntity",parent.getId()).getKey()).list();
+			System.out.println("findGrandChildrensOfChild size:"+grandChilds.size());
+			for(GrandChildEntity grandChild:grandChilds){
+				//But this fix fails to load the grandChilds parent, as the ref key varies in the hierarchy
+				System.out.println("grandChildParent:"+grandChild.getParent());
+			}
 		}
 		return grandChilds;
 	}
